@@ -1,3 +1,3 @@
 # Programming-Final-Project
 
-# Final project for the subject Programación
+Final project for the subject Programación
