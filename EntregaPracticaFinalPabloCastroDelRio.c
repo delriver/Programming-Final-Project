@@ -31,7 +31,7 @@ int menuEstaciones();
 int menuMes();
 int pedirDatosEnteros(int, int);
 float pedirDatosReales(float, float);
-void addFila(FILE *);
+void addFila(FILE *, FILE *);
 
 /*Función principal*/
 int main(){
@@ -128,14 +128,16 @@ void seleccionarOpcion(int a){
 
     case 4: //Opción 4, añadir una fila
       printf("\nHas elegido la opcion 4:\n");
-      FILE *p;
-      p = fopen("ValoresClimatologicosFINAL.csv", "a");
+      FILE *p, *pf;
+      p = fopen("ValoresClimatologicosFINAL.csv", "r");
+      pf = fopen("ValoresClimatologicosFINAL2.csv", "w");
 
-      if (p == NULL){
+      if (p == NULL || pf == NULL){
         printf("\nNo se ha podido abrir el archivo");
       }else{
-        addFila(p);
+        addFila(p, pf);
         fclose(p);
+        fclose(pf);
       }
       break;
 
@@ -415,7 +417,7 @@ float pedirDatosReales(float a, float b){
 @Version: v1.0
 ****************************************************************/
 
-void addFila(FILE *f){
+void addFila(FILE *f, FILE *fp){
   int nTerritorio;
   int nEstacion;
   int nMes;
@@ -427,6 +429,8 @@ void addFila(FILE *f){
   char territorio [30];
   char estacion [30];
   char mes [30];
+
+  char c;
 
   switch(nTerritorio){
     case 1:
@@ -567,5 +571,12 @@ void addFila(FILE *f){
   printf("Número medio mensual/anual de horas de sol: ");
   float sol = pedirDatosReales(0,250);
 
-  fprintf(f, "%s,%s,%s,%.1f,%.1f,%.1f,%i,%i,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f\n", territorio,estacion,mes,temperatura,tempMaxima,tempMinima,precipitacion,humedad,mediaPrecipitacion,nieve,tempestad,niebla,sinDatos,sol);
+  c = fgetc(f);
+
+  while(!feof(f)){
+    c = fgetc(f);
+    fprintf(fp,"%c",c);
+  }
+
+  fprintf(fp, "%s,%s,%s,%.1f,%.1f,%.1f,%i,%i,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f\n", territorio,estacion,mes,temperatura,tempMaxima,tempMinima,precipitacion,humedad,mediaPrecipitacion,nieve,tempestad,niebla,sinDatos,sol);
 }
